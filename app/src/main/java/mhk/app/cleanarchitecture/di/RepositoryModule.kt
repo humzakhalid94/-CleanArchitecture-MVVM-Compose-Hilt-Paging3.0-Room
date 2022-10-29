@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import mhk.app.data.repository.MovieRepositoryImpl
+import mhk.app.data.repository.dataSource.MovieLocalDataSource
 import mhk.app.data.repository.dataSource.MovieRemoteDataSource
 import mhk.app.domain.repository.MovieRepository
 
@@ -14,6 +15,9 @@ import mhk.app.domain.repository.MovieRepository
 object RepositoryModule {
 
     @Provides
-    fun provideMoviesRepository(movieRemoteDataSource: MovieRemoteDataSource) : MovieRepository =
-        MovieRepositoryImpl(movieRemoteDataSource)
+    fun provideMoviesRepository(
+        movieRemoteDataSource: MovieRemoteDataSource,
+        movieLocalDataSource: MovieLocalDataSource
+    ): MovieRepository =
+        MovieRepositoryImpl(movieRemoteDataSource, movieLocalDataSource = movieLocalDataSource)
 }

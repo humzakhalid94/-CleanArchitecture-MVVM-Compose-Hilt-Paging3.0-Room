@@ -15,23 +15,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.collectAsLazyPagingItems
 import mhk.app.cleanarchitecture.presentation.components.MovieListItem
 import mhk.app.cleanarchitecture.presentation.components.ProgressBar
 import mhk.app.cleanarchitecture.presentation.screen.home.HomeViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import mhk.app.domain.util.Result
 import mhk.app.cleanarchitecture.R
-import mhk.app.cleanarchitecture.ui.theme.statusBarColor
-import mhk.app.cleanarchitecture.ui.theme.titleColor
-import mhk.app.cleanarchitecture.ui.theme.topAppbarBackgroundColor
+import mhk.app.cleanarchitecture.ui.theme.*
 
 @Composable
 fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hiltViewModel()) {
 
     val systemUiController = rememberSystemUiController()
     val systemBarColor = MaterialTheme.colors.statusBarColor
-    val titleColor = MaterialTheme.colors.titleColor
-    val topAppbarBackgroundColor = MaterialTheme.colors.topAppbarBackgroundColor
+    val allMovies = viewModel.getAllPopularMovies.collectAsLazyPagingItems()
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -39,34 +37,16 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
         )
     }
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text(text = stringResource(R.string.app_name), color = titleColor)
-            },
-            backgroundColor = topAppbarBackgroundColor
-        )
-    }) {
-        when (val movieResponse = viewModel.movieState.value) {
-            is Result.Loading -> ProgressBar()
-            is Result.Success -> LazyColumn(
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                movieResponse.data?.let { movieList ->
-                    items(
-                        items = movieList.movies,
-                        itemContent = {
-                            MovieListItem(movie = it, navController = navController)
-                        }
-                    )
-                }
-            }
-            is Result.Error -> Toast.makeText(
-                LocalContext.current,
-                stringResource(R.string.toast_error),
-                Toast.LENGTH_SHORT
-            )
+
+    Scaffold(
+        backgroundColor = MaterialTheme.colors.AppThemeColor,
+        contentColor = MaterialTheme.colors.AppContentColor,
+        topBar = {
+            HomeTopBar()
+        },
+        content = {
+            MovieListContent(allMovies = allMovies, navController = navController)
         }
-    }
+    )
 }
 

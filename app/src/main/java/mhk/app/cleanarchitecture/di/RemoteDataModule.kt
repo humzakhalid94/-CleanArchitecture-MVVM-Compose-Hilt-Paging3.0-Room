@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import mhk.app.data.api.MovieApi
+import mhk.app.data.db.MovieDB
 import mhk.app.data.repository.dataSource.MovieRemoteDataSource
 import mhk.app.data.repository.dataSourceImpl.MovieRemoteDataSourceImpl
 
@@ -13,6 +14,6 @@ import mhk.app.data.repository.dataSourceImpl.MovieRemoteDataSourceImpl
 @InstallIn(SingletonComponent::class)
 object RemoteDataModule {
     @Provides
-    fun provideMoviesRemoteDataSource(movieApi: MovieApi) : MovieRemoteDataSource =
-        MovieRemoteDataSourceImpl(movieApi)
+    fun provideMoviesRemoteDataSource(movieApi: MovieApi, movieDB: MovieDB) : MovieRemoteDataSource =
+        MovieRemoteDataSourceImpl(movieApi, movieDB = movieDB)
 }

@@ -8,22 +8,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import mhk.app.domain.model.MovieList
 import mhk.app.domain.useCase.GetPopularMoviesUseCase
+import mhk.app.domain.useCase.MovieUseCases
 import javax.inject.Inject
 import mhk.app.domain.util.Result
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getPopularMoviesUseCase: GetPopularMoviesUseCase
+    movieUseCases: MovieUseCases,
 ) : ViewModel() {
-    private val _movieState = mutableStateOf<Result<MovieList>>(Result.Loading())
-    val movieState: State<Result<MovieList>> = _movieState
-    init {
-        getPopularMovies()
-    }
+    val getAllPopularMovies = movieUseCases.getPopularMoviesUseCase()
 
-    private fun getPopularMovies() {
-        viewModelScope.launch {
-          _movieState.value =  getPopularMoviesUseCase()
-        }
-    }
 }
